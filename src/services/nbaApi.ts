@@ -42,10 +42,29 @@ export interface TrendResult {
   message: string;
 }
 
+export interface TodayGame {
+  game_id: string;
+  home_team: string;
+  away_team: string;
+  game_time: string;
+  home_score?: number;
+  away_score?: number;
+  status: string;
+}
+
+export interface VsTeamStats {
+  games_played: number;
+  avg_pts: number;
+  avg_reb: number;
+  avg_ast: number;
+  total_wins: number;
+  total_losses: number;
+}
+
 export const nbaApi = {
-  async getPlayers(): Promise<Player[]> {
-    const response = await fetch(`${API_BASE_URL}/players`);
-    if (!response.ok) throw new Error("Failed to fetch players");
+  async getTodayGames(): Promise<TodayGame[]> {
+    const response = await fetch(`${API_BASE_URL}/games/today`);
+    if (!response.ok) throw new Error("Failed to fetch today's games");
     return response.json();
   },
 
@@ -55,21 +74,27 @@ export const nbaApi = {
     return response.json();
   },
 
-  async getSeasonStats(playerId: number, season: string = "2024-25"): Promise<SeasonStats> {
-    const response = await fetch(`${API_BASE_URL}/players/${playerId}/season-stats?season=${season}`);
-    if (!response.ok) throw new Error("Failed to fetch season stats");
+  async getPlayerSeason(playerId: number): Promise<SeasonStats> {
+    const response = await fetch(`${API_BASE_URL}/player/${playerId}/season`);
+    if (!response.ok) throw new Error("Failed to fetch player season stats");
     return response.json();
   },
 
-  async getGameLogs(playerId: number, season: string = "2024-25"): Promise<GameLog[]> {
-    const response = await fetch(`${API_BASE_URL}/players/${playerId}/game-logs?season=${season}`);
-    if (!response.ok) throw new Error("Failed to fetch game logs");
+  async getPlayerRecent(playerId: number): Promise<GameLog[]> {
+    const response = await fetch(`${API_BASE_URL}/player/${playerId}/recent`);
+    if (!response.ok) throw new Error("Failed to fetch recent games");
     return response.json();
   },
 
-  async analyzeTrend(playerId: number, stat: string, threshold: number, season: string = "2024-25"): Promise<TrendResult> {
+  async getPlayerVsTeam(playerId: number, teamAbbr: string): Promise<VsTeamStats> {
+    const response = await fetch(`${API_BASE_URL}/player/${playerId}/vs/${teamAbbr}`);
+    if (!response.ok) throw new Error("Failed to fetch vs team stats");
+    return response.json();
+  },
+
+  async analyzeTrend(playerId: number, stat: string, threshold: number): Promise<TrendResult> {
     const response = await fetch(
-      `${API_BASE_URL}/players/${playerId}/trend?stat=${stat}&threshold=${threshold}&season=${season}`
+      `${API_BASE_URL}/player/${playerId}/trend?stat=${stat}&threshold=${threshold}`
     );
     if (!response.ok) throw new Error("Failed to analyze trend");
     return response.json();
