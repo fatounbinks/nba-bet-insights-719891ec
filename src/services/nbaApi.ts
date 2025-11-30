@@ -32,7 +32,9 @@ export interface GameLog {
   PTS: number;
   REB: number;
   AST: number;
-  MIN?: number;
+  PRA: number;
+  PA: number;
+  PR: number;
 }
 
 export interface TrendResult {
@@ -43,28 +45,25 @@ export interface TrendResult {
 }
 
 export interface TodayGame {
-  game_id: string;
-  home_team: string;
-  away_team: string;
-  game_time: string;
-  home_score?: number;
-  away_score?: number;
+  gameId: string;
+  homeTeam: string;
+  awayTeam: string;
+  time: string;
+  homeScore?: number;
+  awayScore?: number;
   status: string;
+  gameDate: string;
+  isLive: boolean;
 }
 
 export interface VsTeamStats {
-  games_played: number;
-  avg_pts: number;
-  avg_reb: number;
-  avg_ast: number;
-  total_wins: number;
-  total_losses: number;
+  games: GameLog[];
 }
 
 export const nbaApi = {
-  async getTodayGames(): Promise<TodayGame[]> {
-    const response = await fetch(`${API_BASE_URL}/games/today`);
-    if (!response.ok) throw new Error("Failed to fetch today's games");
+  async get48hGames(): Promise<TodayGame[]> {
+    const response = await fetch(`${API_BASE_URL}/games/48h`);
+    if (!response.ok) throw new Error("Failed to fetch games");
     return response.json();
   },
 
@@ -86,8 +85,8 @@ export const nbaApi = {
     return response.json();
   },
 
-  async getPlayerVsTeam(playerId: number, teamAbbr: string): Promise<VsTeamStats> {
-    const response = await fetch(`${API_BASE_URL}/player/${playerId}/vs/${teamAbbr}`);
+  async getPlayerVsTeam(playerId: number, teamCode: string): Promise<VsTeamStats> {
+    const response = await fetch(`${API_BASE_URL}/player/${playerId}/vs/${teamCode}`);
     if (!response.ok) throw new Error("Failed to fetch vs team stats");
     return response.json();
   },

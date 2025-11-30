@@ -26,7 +26,7 @@ export function PlayerDashboard({ player }: PlayerDashboardProps) {
 
   const { data: recentGames, isLoading: recentLoading } = useQuery({
     queryKey: ["player-recent", player.id],
-    queryFn: () => nbaApi.getPlayerRecent(player.id, 20),
+    queryFn: () => nbaApi.getPlayerRecent(player.id, 10),
   });
 
   const { data: vsTeamStats, isLoading: vsTeamLoading } = useQuery({
@@ -179,7 +179,9 @@ export function PlayerDashboard({ player }: PlayerDashboardProps) {
                         <TableHead className="text-center">PTS</TableHead>
                         <TableHead className="text-center">REB</TableHead>
                         <TableHead className="text-center">AST</TableHead>
-                        <TableHead className="text-center">MIN</TableHead>
+                        <TableHead className="text-center font-bold">PRA</TableHead>
+                        <TableHead className="text-center font-bold">PA</TableHead>
+                        <TableHead className="text-center font-bold">PR</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -188,7 +190,7 @@ export function PlayerDashboard({ player }: PlayerDashboardProps) {
                           <TableCell className="font-medium">{game.GAME_DATE}</TableCell>
                           <TableCell className="font-medium">{game.MATCHUP}</TableCell>
                           <TableCell className="text-center">
-                            <span className={`font-bold ${game.WL === "W" ? "text-win-green" : "text-loss-red"}`}>
+                            <span className={`font-bold ${game.WL === "W" ? "text-win" : "text-loss"}`}>
                               {game.WL}
                             </span>
                           </TableCell>
@@ -197,7 +199,15 @@ export function PlayerDashboard({ player }: PlayerDashboardProps) {
                           </TableCell>
                           <TableCell className="text-center text-nba-blue font-semibold">{game.REB}</TableCell>
                           <TableCell className="text-center text-accent font-semibold">{game.AST}</TableCell>
-                          <TableCell className="text-center text-muted-foreground">{game.MIN}</TableCell>
+                          <TableCell className="text-center">
+                            <span className="text-primary font-bold text-lg">{game.PRA}</span>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <span className="text-accent font-bold text-lg">{game.PA}</span>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <span className="text-nba-blue font-bold text-lg">{game.PR}</span>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -234,32 +244,50 @@ export function PlayerDashboard({ player }: PlayerDashboardProps) {
 
               {vsTeamLoading ? (
                 <p className="text-muted-foreground text-center">Loading stats...</p>
-              ) : vsTeamStats ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="bg-secondary/50 p-4 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-primary">{vsTeamStats.games_played}</p>
-                    <p className="text-sm text-muted-foreground mt-1">Games Played</p>
-                  </div>
-                  <div className="bg-secondary/50 p-4 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-primary">{vsTeamStats.avg_pts.toFixed(1)}</p>
-                    <p className="text-sm text-muted-foreground mt-1">Avg PTS</p>
-                  </div>
-                  <div className="bg-secondary/50 p-4 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-nba-blue">{vsTeamStats.avg_reb.toFixed(1)}</p>
-                    <p className="text-sm text-muted-foreground mt-1">Avg REB</p>
-                  </div>
-                  <div className="bg-secondary/50 p-4 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-accent">{vsTeamStats.avg_ast.toFixed(1)}</p>
-                    <p className="text-sm text-muted-foreground mt-1">Avg AST</p>
-                  </div>
-                  <div className="bg-secondary/50 p-4 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-win-green">{vsTeamStats.total_wins}</p>
-                    <p className="text-sm text-muted-foreground mt-1">Wins</p>
-                  </div>
-                  <div className="bg-secondary/50 p-4 rounded-lg text-center">
-                    <p className="text-2xl font-bold text-loss-red">{vsTeamStats.total_losses}</p>
-                    <p className="text-sm text-muted-foreground mt-1">Losses</p>
-                  </div>
+              ) : vsTeamStats && vsTeamStats.games && vsTeamStats.games.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Matchup</TableHead>
+                        <TableHead className="text-center">W/L</TableHead>
+                        <TableHead className="text-center">PTS</TableHead>
+                        <TableHead className="text-center">REB</TableHead>
+                        <TableHead className="text-center">AST</TableHead>
+                        <TableHead className="text-center font-bold">PRA</TableHead>
+                        <TableHead className="text-center font-bold">PA</TableHead>
+                        <TableHead className="text-center font-bold">PR</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {vsTeamStats.games.map((game, idx) => (
+                        <TableRow key={idx} className="hover:bg-secondary/50 transition-colors">
+                          <TableCell className="font-medium">{game.GAME_DATE}</TableCell>
+                          <TableCell className="font-medium">{game.MATCHUP}</TableCell>
+                          <TableCell className="text-center">
+                            <span className={`font-bold ${game.WL === "W" ? "text-win" : "text-loss"}`}>
+                              {game.WL}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <span className="text-primary font-bold text-lg">{game.PTS}</span>
+                          </TableCell>
+                          <TableCell className="text-center text-nba-blue font-semibold">{game.REB}</TableCell>
+                          <TableCell className="text-center text-accent font-semibold">{game.AST}</TableCell>
+                          <TableCell className="text-center">
+                            <span className="text-primary font-bold text-lg">{game.PRA}</span>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <span className="text-accent font-bold text-lg">{game.PA}</span>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <span className="text-nba-blue font-bold text-lg">{game.PR}</span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
               ) : selectedTeam ? (
                 <p className="text-muted-foreground text-center">No data found for {selectedTeam}</p>
