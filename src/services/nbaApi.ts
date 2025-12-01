@@ -70,6 +70,11 @@ export interface VsTeamStats {
   OPPONENT?: string;
 }
 
+export interface AbsencesImpact {
+  home_penalty: number;
+  away_penalty: number;
+}
+
 export interface MatchPrediction {
   home_team: string;
   away_team: string;
@@ -83,6 +88,7 @@ export interface MatchPrediction {
     away_net_rtg: number;
     spread_raw: number;
   };
+  absences_impact?: AbsencesImpact;
 }
 
 export interface PlayerProjection {
@@ -97,6 +103,21 @@ export interface PlayerProjection {
   season_avg_ast: number;
   pace: number;
   opponent_defense_rating: number;
+}
+
+export interface PlayerStats {
+  games: number;
+  win_percentage: number;
+  ppg: number;
+  status: string;
+}
+
+export interface MissingPlayerAnalysis {
+  player_id: number;
+  player_name: string;
+  team: string;
+  stats_with: PlayerStats;
+  stats_without: PlayerStats;
 }
 
 export const nbaApi = {
@@ -142,12 +163,16 @@ export const nbaApi = {
   async predictMatch(
     homeTeamId: string,
     awayTeamId: string,
-    homeStarMissing?: boolean,
-    awayStarMissing?: boolean
+    homeMissingPlayerIds?: number[],
+    awayMissingPlayerIds?: number[]
   ): Promise<MatchPrediction> {
     const params = new URLSearchParams();
-    if (homeStarMissing) params.append("home_star_missing", "true");
-    if (awayStarMissing) params.append("away_star_missing", "true");
+    if (homeMissingPlayerIds && homeMissingPlayerIds.length > 0) {
+      homeMissingPlayerIds.forEach(id => params.append("home_missing_players", id.toString()));
+    }
+    if (awayMissingPlayerIds && awayMissingPlayerIds.length > 0) {
+      awayMissingPlayerIds.forEach(id => params.append("away_missing_players", id.toString()));
+    }
     const queryString = params.toString() ? `?${params.toString()}` : "";
     const response = await fetch(`${API_BASE_URL}/predict/match/${homeTeamId}/${awayTeamId}${queryString}`);
     if (!response.ok) throw new Error("Failed to predict match");
@@ -160,6 +185,15 @@ export const nbaApi = {
   ): Promise<PlayerProjection> {
     const response = await fetch(`${API_BASE_URL}/predict/player/${playerId}/vs/${opponentTeamId}`);
     if (!response.ok) throw new Error("Failed to predict player stats");
+    return response.json();
+  },
+
+  async analyzeMissingPlayer(
+    teamCode: string,
+    playerId: number
+  ): Promise<MissingPlayerAnalysis> {
+    const response = await fetch(`${API_BASE_URL}/analytics/team/${teamCode}/missing-player/${playerId}`);
+    if (!response.ok) throw new Error("Failed to analyze missing player impact");
     return response.json();
   },
 };
