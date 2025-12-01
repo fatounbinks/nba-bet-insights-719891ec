@@ -129,31 +129,33 @@ export function MatchSimulator({
   return (
     <div className="space-y-6">
       {/* Context Banner */}
-      <Card className="bg-gradient-to-r from-purple-500/10 to-amber-500/10 border-purple-200 dark:border-purple-800">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3 flex-1">
-              <div className="text-lg font-bold text-foreground">{homeTeamName}</div>
-              <div className="text-muted-foreground">vs</div>
-              <div className="text-lg font-bold text-foreground">{awayTeamName}</div>
+      {displayPrediction && (
+        <Card className="bg-gradient-to-r from-purple-500/10 to-amber-500/10 border-purple-200 dark:border-purple-800">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 flex-1">
+                <div className="text-lg font-bold text-foreground">{homeTeamName}</div>
+                <div className="text-muted-foreground">vs</div>
+                <div className="text-lg font-bold text-foreground">{awayTeamName}</div>
+              </div>
+              <div className="flex gap-2 flex-wrap justify-end">
+                {displayPrediction.match_context.home_usage_boost > 0 && (
+                  <Badge className="bg-emerald-500/20 text-emerald-700 border-emerald-500/30 border gap-1">
+                    <Flame className="h-3 w-3" />
+                    <span className="text-xs">🔥 Redistribution attaque: +{displayPrediction.match_context.home_usage_boost.toFixed(1)}% ({homeTeamName})</span>
+                  </Badge>
+                )}
+                {displayPrediction.match_context.away_usage_boost > 0 && (
+                  <Badge className="bg-emerald-500/20 text-emerald-700 border-emerald-500/30 border gap-1">
+                    <Flame className="h-3 w-3" />
+                    <span className="text-xs">🔥 Redistribution attaque: +{displayPrediction.match_context.away_usage_boost.toFixed(1)}% ({awayTeamName})</span>
+                  </Badge>
+                )}
+              </div>
             </div>
-            <div className="flex gap-2 flex-wrap justify-end">
-              {displayPrediction.match_context.home_usage_boost > 0 && (
-                <Badge className="bg-emerald-500/20 text-emerald-700 border-emerald-500/30 border gap-1">
-                  <Flame className="h-3 w-3" />
-                  <span className="text-xs">🔥 Redistribution attaque: +{displayPrediction.match_context.home_usage_boost.toFixed(1)}% ({homeTeamName})</span>
-                </Badge>
-              )}
-              {displayPrediction.match_context.away_usage_boost > 0 && (
-                <Badge className="bg-emerald-500/20 text-emerald-700 border-emerald-500/30 border gap-1">
-                  <Flame className="h-3 w-3" />
-                  <span className="text-xs">🔥 Redistribution attaque: +{displayPrediction.match_context.away_usage_boost.toFixed(1)}% ({awayTeamName})</span>
-                </Badge>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Blowout Alert */}
       {hasHighBlowoutRisk && (
