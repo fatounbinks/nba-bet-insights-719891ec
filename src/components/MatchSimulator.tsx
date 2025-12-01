@@ -40,11 +40,11 @@ export function MatchSimulator({
   // Build list of player IDs from current state and initial data
   const homeAbsentIds = homeAbsentIndices
     .map((idx) => initialPrediction?.home_players[idx]?.player_id)
-    .filter((id) => id !== undefined && id > 0) as number[];
+    .filter((id) => id !== undefined) as number[];
 
   const awayAbsentIds = awayAbsentIndices
     .map((idx) => initialPrediction?.away_players[idx]?.player_id)
-    .filter((id) => id !== undefined && id > 0) as number[];
+    .filter((id) => id !== undefined) as number[];
 
   // Fetch with absent players
   const { data: prediction, isLoading: predictionLoading } = useQuery({
