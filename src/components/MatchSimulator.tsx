@@ -174,24 +174,22 @@ export function MatchSimulator({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {prediction.home_players.map((player, idx) => {
-                  const isAbsent = player.player_id ? homeAbsentIds.includes(player.player_id) : false;
-                  const boostValue = prediction.match_context.home_usage_boost;
+                {displayPrediction.home_players.map((player, idx) => {
+                  const isAbsent = homeAbsentIndices.includes(idx);
+                  const boostValue = displayPrediction.match_context.home_usage_boost;
                   const boostApplied = player.context?.boost_applied || "";
 
                   return (
                     <TableRow
-                      key={player.player_id ? `home-${player.player_id}` : `home-${idx}`}
+                      key={`home-${idx}`}
                       className={isAbsent ? "bg-muted/50 opacity-60" : ""}
                     >
                       <TableCell className="w-10">
-                        {player.player_id && (
-                          <Checkbox
-                            checked={isAbsent}
-                            onCheckedChange={() => toggleHomePlayerAbsent(player.player_id!)}
-                            disabled={isLoading}
-                          />
-                        )}
+                        <Checkbox
+                          checked={isAbsent}
+                          onCheckedChange={() => toggleHomePlayerAbsent(idx)}
+                          disabled={isLoading}
+                        />
                       </TableCell>
                       <TableCell className="font-medium">
                         {player.player}
