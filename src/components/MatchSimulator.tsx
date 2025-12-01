@@ -155,153 +155,160 @@ export function MatchSimulator({
         </Card>
       )}
 
-      {/* Home Team Players Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">{homeTeamName}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-10">État</TableHead>
-                  <TableHead>Nom</TableHead>
-                  <TableHead className="text-right">MIN</TableHead>
-                  <TableHead className="text-right font-bold">PTS</TableHead>
-                  <TableHead className="text-right">REB</TableHead>
-                  <TableHead className="text-right">AST</TableHead>
-                  <TableHead className="text-right bg-amber-500/10 font-bold">PRA</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {displayPrediction.home_players.map((player, idx) => {
-                  const isAbsent = homeAbsentIndices.includes(idx);
-                  const boostValue = displayPrediction.match_context.home_usage_boost;
-                  const boostApplied = player.context?.boost_applied || "";
+      {/* Two-Column Layout: Home & Away Teams */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Home Team Players Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-purple-500"></span>
+              {homeTeamName}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <Table className="text-sm">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-10">État</TableHead>
+                    <TableHead className="max-w-[100px] text-ellipsis">Nom</TableHead>
+                    <TableHead className="text-right text-xs">MIN</TableHead>
+                    <TableHead className="text-right text-xs font-bold">PTS</TableHead>
+                    <TableHead className="text-right text-xs">REB</TableHead>
+                    <TableHead className="text-right text-xs">AST</TableHead>
+                    <TableHead className="text-right text-xs bg-amber-500/10 font-bold">PRA</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {displayPrediction.home_players.map((player, idx) => {
+                    const isAbsent = homeAbsentIndices.includes(idx);
+                    const boostValue = displayPrediction.match_context.home_usage_boost;
 
-                  return (
-                    <TableRow
-                      key={`home-${idx}`}
-                      className={isAbsent ? "bg-muted/50 opacity-60" : ""}
-                    >
-                      <TableCell className="w-10">
-                        <Checkbox
-                          checked={isAbsent}
-                          onCheckedChange={() => toggleHomePlayerAbsent(idx)}
-                          disabled={isLoading}
-                        />
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {player.player}
-                        {player.position && <span className="text-xs text-muted-foreground ml-2">({player.position})</span>}
-                      </TableCell>
-                      <TableCell className="text-right text-sm">
-                        {player.predicted_stats.MIN.toFixed(1)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-baseline justify-end gap-1">
-                          <span className="font-bold text-base">
-                            {player.predicted_stats.PTS.toFixed(1)}
-                          </span>
-                          {boostValue > 0 && (
-                            <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
-                              +{boostValue.toFixed(1)}%
+                    return (
+                      <TableRow
+                        key={`home-${idx}`}
+                        className={isAbsent ? "bg-muted/50 opacity-60" : ""}
+                      >
+                        <TableCell className="w-10">
+                          <Checkbox
+                            checked={isAbsent}
+                            onCheckedChange={() => toggleHomePlayerAbsent(idx)}
+                            disabled={isLoading}
+                          />
+                        </TableCell>
+                        <TableCell className="font-medium text-xs truncate">
+                          {player.player}
+                          {player.position && <span className="text-xs text-muted-foreground ml-1">({player.position})</span>}
+                        </TableCell>
+                        <TableCell className="text-right text-xs">
+                          {player.predicted_stats.MIN.toFixed(1)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-baseline justify-end gap-1">
+                            <span className="font-bold text-sm">
+                              {player.predicted_stats.PTS.toFixed(1)}
                             </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right text-sm">
-                        {player.predicted_stats.REB.toFixed(1)}
-                      </TableCell>
-                      <TableCell className="text-right text-sm">
-                        {player.predicted_stats.AST.toFixed(1)}
-                      </TableCell>
-                      <TableCell className="text-right font-bold bg-amber-500/10">
-                        {player.advanced_metrics_projected.PRA.toFixed(1)}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+                            {boostValue > 0 && (
+                              <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
+                                +{boostValue.toFixed(1)}%
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-xs">
+                          {player.predicted_stats.REB.toFixed(1)}
+                        </TableCell>
+                        <TableCell className="text-right text-xs">
+                          {player.predicted_stats.AST.toFixed(1)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold bg-amber-500/10 text-xs">
+                          {player.advanced_metrics_projected.PRA.toFixed(1)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Away Team Players Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">{awayTeamName}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-10">État</TableHead>
-                  <TableHead>Nom</TableHead>
-                  <TableHead className="text-right">MIN</TableHead>
-                  <TableHead className="text-right font-bold">PTS</TableHead>
-                  <TableHead className="text-right">REB</TableHead>
-                  <TableHead className="text-right">AST</TableHead>
-                  <TableHead className="text-right bg-amber-500/10 font-bold">PRA</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {displayPrediction.away_players.map((player, idx) => {
-                  const isAbsent = awayAbsentIndices.includes(idx);
-                  const boostValue = displayPrediction.match_context.away_usage_boost;
-                  const boostApplied = player.context?.boost_applied || "";
+        {/* Away Team Players Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-amber-500"></span>
+              {awayTeamName}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <Table className="text-sm">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-10">État</TableHead>
+                    <TableHead className="max-w-[100px] text-ellipsis">Nom</TableHead>
+                    <TableHead className="text-right text-xs">MIN</TableHead>
+                    <TableHead className="text-right text-xs font-bold">PTS</TableHead>
+                    <TableHead className="text-right text-xs">REB</TableHead>
+                    <TableHead className="text-right text-xs">AST</TableHead>
+                    <TableHead className="text-right text-xs bg-amber-500/10 font-bold">PRA</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {displayPrediction.away_players.map((player, idx) => {
+                    const isAbsent = awayAbsentIndices.includes(idx);
+                    const boostValue = displayPrediction.match_context.away_usage_boost;
 
-                  return (
-                    <TableRow
-                      key={`away-${idx}`}
-                      className={isAbsent ? "bg-muted/50 opacity-60" : ""}
-                    >
-                      <TableCell className="w-10">
-                        <Checkbox
-                          checked={isAbsent}
-                          onCheckedChange={() => toggleAwayPlayerAbsent(idx)}
-                          disabled={isLoading}
-                        />
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {player.player}
-                        {player.position && <span className="text-xs text-muted-foreground ml-2">({player.position})</span>}
-                      </TableCell>
-                      <TableCell className="text-right text-sm">
-                        {player.predicted_stats.MIN.toFixed(1)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-baseline justify-end gap-1">
-                          <span className="font-bold text-base">
-                            {player.predicted_stats.PTS.toFixed(1)}
-                          </span>
-                          {boostValue > 0 && (
-                            <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
-                              +{boostValue.toFixed(1)}%
+                    return (
+                      <TableRow
+                        key={`away-${idx}`}
+                        className={isAbsent ? "bg-muted/50 opacity-60" : ""}
+                      >
+                        <TableCell className="w-10">
+                          <Checkbox
+                            checked={isAbsent}
+                            onCheckedChange={() => toggleAwayPlayerAbsent(idx)}
+                            disabled={isLoading}
+                          />
+                        </TableCell>
+                        <TableCell className="font-medium text-xs truncate">
+                          {player.player}
+                          {player.position && <span className="text-xs text-muted-foreground ml-1">({player.position})</span>}
+                        </TableCell>
+                        <TableCell className="text-right text-xs">
+                          {player.predicted_stats.MIN.toFixed(1)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-baseline justify-end gap-1">
+                            <span className="font-bold text-sm">
+                              {player.predicted_stats.PTS.toFixed(1)}
                             </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right text-sm">
-                        {player.predicted_stats.REB.toFixed(1)}
-                      </TableCell>
-                      <TableCell className="text-right text-sm">
-                        {player.predicted_stats.AST.toFixed(1)}
-                      </TableCell>
-                      <TableCell className="text-right font-bold bg-amber-500/10">
-                        {player.advanced_metrics_projected.PRA.toFixed(1)}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+                            {boostValue > 0 && (
+                              <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
+                                +{boostValue.toFixed(1)}%
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-xs">
+                          {player.predicted_stats.REB.toFixed(1)}
+                        </TableCell>
+                        <TableCell className="text-right text-xs">
+                          {player.predicted_stats.AST.toFixed(1)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold bg-amber-500/10 text-xs">
+                          {player.advanced_metrics_projected.PRA.toFixed(1)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
