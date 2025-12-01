@@ -209,20 +209,21 @@ export function MatchSimulator({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {displayPrediction.home_players.map((player, idx) => {
-                    const isAbsent = homeAbsentIndices.includes(idx);
-                    const boostValue = displayPrediction.match_context.home_usage_boost;
+                  {displayPrediction?.home_players.map((player, idx) => {
+                    const isAbsent = homeAbsentList.includes(player.player_id);
+                    const boostValue = displayPrediction?.match_context.home_usage_boost || 0;
 
                     return (
                       <TableRow
-                        key={`home-${idx}`}
+                        key={`home-${player.player_id}`}
                         className={isAbsent ? "bg-muted/50 opacity-60" : ""}
                       >
                         <TableCell className="w-10">
                           <Checkbox
                             checked={isAbsent}
-                            onCheckedChange={() => toggleHomePlayerAbsent(idx)}
-                            disabled={isLoading}
+                            onCheckedChange={() => handleToggleHomeAbsent(player.player_id)}
+                            disabled={initialLoading}
+                            aria-label={`Marquer ${player.player} comme absent`}
                           />
                         </TableCell>
                         <TableCell className="font-medium text-xs truncate">
