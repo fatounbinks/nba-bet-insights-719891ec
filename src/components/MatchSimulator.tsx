@@ -27,8 +27,10 @@ export function MatchSimulator({
   homeTeamName,
   awayTeamName,
 }: MatchSimulatorProps) {
-  const [homeAbsentIndices, setHomeAbsentIndices] = useState<number[]>([]);
-  const [awayAbsentIndices, setAwayAbsentIndices] = useState<number[]>([]);
+  // State for storing absent player IDs directly
+  const [homeAbsentList, setHomeAbsentList] = useState<number[]>([]);
+  const [awayAbsentList, setAwayAbsentList] = useState<number[]>([]);
+  const [isRecalculating, setIsRecalculating] = useState(false);
 
   // Initial fetch without absent players
   const { data: initialPrediction, isLoading: initialLoading } = useQuery({
@@ -37,72 +39,77 @@ export function MatchSimulator({
       nbaApi.getFullMatchPredictionWithAbsents(homeTeamId, awayTeamId),
   });
 
-  // Build list of player IDs from current state and initial data
-  const homeAbsentIds = useMemo(() => {
-    return homeAbsentIndices
-      .map((idx) => initialPrediction?.home_players[idx]?.player_id)
-      .filter((id) => id !== undefined) as number[];
-  }, [homeAbsentIndices, initialPrediction]);
+  // State for current prediction data (either initial or with absents)
+  const [displayPrediction, setDisplayPrediction] = useState<InteractiveMatchPrediction | undefined>(undefined);
 
-  const awayAbsentIds = useMemo(() => {
-    return awayAbsentIndices
-      .map((idx) => initialPrediction?.away_players[idx]?.player_id)
-      .filter((id) => id !== undefined) as number[];
-  }, [awayAbsentIndices, initialPrediction]);
+  // Update display prediction when initial data loads
+  useEffect(() => {
+    if (initialPrediction) {
+      setDisplayPrediction(initialPrediction);
+    }
+  }, [initialPrediction]);
 
-  // Fetch with absent players (triggers immediately when absent IDs change)
-  const { data: prediction, isLoading: predictionLoading, isFetching: isPredictionFetching } = useQuery({
-    queryKey: [
-      "interactive-match-prediction",
-      homeTeamId,
-      awayTeamId,
-      homeAbsentIds.length > 0 ? homeAbsentIds.join(",") : "none",
-      awayAbsentIds.length > 0 ? awayAbsentIds.join(",") : "none",
-    ],
-    queryFn: () =>
-      nbaApi.getFullMatchPredictionWithAbsents(
-        homeTeamId,
-        awayTeamId,
-        homeAbsentIds.length > 0 ? homeAbsentIds : undefined,
-        awayAbsentIds.length > 0 ? awayAbsentIds : undefined
-      ),
-    enabled: !initialLoading && initialPrediction !== undefined,
-  });
+  // Explicit handler for toggling home players
+  const handleToggleHomeAbsent = useCallback((playerId: number) => {
+    console.log("Click détecté sur joueur :", playerId);
+    setHomeAbsentList((prev) => {
+      const newList = prev.includes(playerId)
+        ? prev.filter((id) => id !== playerId)
+        : [...prev, playerId];
+      console.log("Mise à jour homeAbsentList :", newList);
+      return newList;
+    });
+  }, []);
 
-  // Use the prediction with absent players if we have any, otherwise use initial
-  const displayPrediction =
-    (homeAbsentIds.length > 0 || awayAbsentIds.length > 0) && prediction
-      ? prediction
-      : initialPrediction;
+  // Explicit handler for toggling away players
+  const handleToggleAwayAbsent = useCallback((playerId: number) => {
+    console.log("Click détecté sur joueur :", playerId);
+    setAwayAbsentList((prev) => {
+      const newList = prev.includes(playerId)
+        ? prev.filter((id) => id !== playerId)
+        : [...prev, playerId];
+      console.log("Mise à jour awayAbsentList :", newList);
+      return newList;
+    });
+  }, []);
 
-  // Show loading indicator only during recalculation (not on initial load)
-  const isRecalculating =
-    isPredictionFetching &&
-    (homeAbsentIds.length > 0 || awayAbsentIds.length > 0);
+  // Effect to trigger API fetch when absent lists change
+  useEffect(() => {
+    if (!initialPrediction) return;
 
-  const isLoading = initialLoading;
+    if (homeAbsentList.length === 0 && awayAbsentList.length === 0) {
+      // Reset to initial prediction if no absents
+      setDisplayPrediction(initialPrediction);
+      setIsRecalculating(false);
+      return;
+    }
 
-  const toggleHomePlayerAbsent = useCallback(
-    (playerIndex: number) => {
-      setHomeAbsentIndices((prev) =>
-        prev.includes(playerIndex)
-          ? prev.filter((idx) => idx !== playerIndex)
-          : [...prev, playerIndex]
-      );
-    },
-    []
-  );
+    const fetchUpdatedPrediction = async () => {
+      try {
+        setIsRecalculating(true);
+        console.log("Lancement de l'API avec absent players:", {
+          homeAbsentList,
+          awayAbsentList,
+        });
 
-  const toggleAwayPlayerAbsent = useCallback(
-    (playerIndex: number) => {
-      setAwayAbsentIndices((prev) =>
-        prev.includes(playerIndex)
-          ? prev.filter((idx) => idx !== playerIndex)
-          : [...prev, playerIndex]
-      );
-    },
-    []
-  );
+        const result = await nbaApi.getFullMatchPredictionWithAbsents(
+          homeTeamId,
+          awayTeamId,
+          homeAbsentList.length > 0 ? homeAbsentList : undefined,
+          awayAbsentList.length > 0 ? awayAbsentList : undefined
+        );
+
+        console.log("Réponse API reçue :", result);
+        setDisplayPrediction(result);
+      } catch (error) {
+        console.error("Erreur lors du fetch :", error);
+      } finally {
+        setIsRecalculating(false);
+      }
+    };
+
+    fetchUpdatedPrediction();
+  }, [homeAbsentList, awayAbsentList, homeTeamId, awayTeamId, initialPrediction]);
 
   const hasHighBlowoutRisk = useMemo(() => {
     if (!displayPrediction) return false;
