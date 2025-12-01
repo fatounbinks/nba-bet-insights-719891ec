@@ -21,17 +21,7 @@ const GameDetails = () => {
   const homeTeamId = currentGame?.homeTeamId || (currentGame ? getTeamCode(currentGame.homeTeam) : "");
   const awayTeamId = currentGame?.awayTeamId || (currentGame ? getTeamCode(currentGame.awayTeam) : "");
 
-  const {
-    data: matchPrediction,
-    isLoading: predictionLoading,
-    error: predictionError,
-  } = useQuery({
-    queryKey: ["full-match-prediction", homeTeamId, awayTeamId],
-    queryFn: () => nbaApi.getFullMatchPrediction(homeTeamId, awayTeamId),
-    enabled: !!homeTeamId && !!awayTeamId && !gamesLoading,
-  });
-
-  const isLoading = gamesLoading || predictionLoading;
+  const isLoading = gamesLoading;
 
   if (isLoading) {
     return (
