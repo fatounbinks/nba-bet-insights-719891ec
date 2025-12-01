@@ -143,8 +143,8 @@ export function MatchSimulator({
         </Card>
       )}
 
-      {/* Loading State */}
-      {isLoading && (
+      {/* Loading State - Only show during recalculation */}
+      {isRecalculating && (
         <Card className="bg-blue-500/10 border-blue-500/30">
           <CardContent className="p-4 flex items-center gap-2">
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
