@@ -27,8 +27,8 @@ export function MatchSimulator({
   homeTeamName,
   awayTeamName,
 }: MatchSimulatorProps) {
-  const [homeAbsentIds, setHomeAbsentIds] = useState<number[]>([]);
-  const [awayAbsentIds, setAwayAbsentIds] = useState<number[]>([]);
+  const [homeAbsentNames, setHomeAbsentNames] = useState<string[]>([]);
+  const [awayAbsentNames, setAwayAbsentNames] = useState<string[]>([]);
 
   const { data: prediction, isLoading } = useQuery({
     queryKey: ["interactive-match-prediction", homeTeamId, awayTeamId, homeAbsentIds.join(","), awayAbsentIds.join(",")],
