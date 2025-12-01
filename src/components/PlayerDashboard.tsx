@@ -54,6 +54,24 @@ export function PlayerDashboard({ player }: PlayerDashboardProps) {
     }
   };
 
+  // Helper pour vérifier si on a des données valides à afficher pour VS Team
+  const hasVsStats = vsTeamStats && typeof vsTeamStats === 'object';
+  const hasGamesPlayed = hasVsStats && (vsTeamStats.GP > 0);
+
+  // --- CALCUL DES MOYENNES SUR LES 7 DERNIERS MATCHS ---
+  // On prend les 7 premiers matchs de la liste récente (qui en contient 10)
+  const last7Games = recentGames ? recentGames.slice(0, 7) : [];
+  const has7Games = last7Games.length > 0;
+  
+  const avg7 = has7Games ? {
+    PTS: last7Games.reduce((acc, game) => acc + game.PTS, 0) / last7Games.length,
+    REB: last7Games.reduce((acc, game) => acc + game.REB, 0) / last7Games.length,
+    AST: last7Games.reduce((acc, game) => acc + game.AST, 0) / last7Games.length,
+    PRA: last7Games.reduce((acc, game) => acc + game.PRA, 0) / last7Games.length,
+    PA: last7Games.reduce((acc, game) => acc + game.PA, 0) / last7Games.length,
+    PR: last7Games.reduce((acc, game) => acc + game.PR, 0) / last7Games.length,
+  } : null;
+
   return (
     <div className="space-y-6">
       {/* Player Summary Card */}
@@ -72,7 +90,8 @@ export function PlayerDashboard({ player }: PlayerDashboardProps) {
             <p className="text-muted-foreground text-center">Loading season stats...</p>
           ) : seasonStats ? (
             <div className="space-y-6">
-              {/* Main Stats */}
+              
+              {/* --- SECTION 1: MOYENNES SAISON --- */}
               <div>
                 <h3 className="text-sm font-semibold text-muted-foreground mb-3">MOYENNES SAISON</h3>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -99,7 +118,7 @@ export function PlayerDashboard({ player }: PlayerDashboardProps) {
                 </div>
               </div>
 
-              {/* Combo Stats for Betting */}
+              {/* --- SECTION 2: COMBOS PARIS SPORTIFS --- */}
               <div>
                 <h3 className="text-sm font-semibold text-muted-foreground mb-3">COMBOS PARIS SPORTIFS</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -122,9 +141,45 @@ export function PlayerDashboard({ player }: PlayerDashboardProps) {
                 </div>
               </div>
 
-              {/* Additional Stats */}
+              {/* --- NOUVELLE SECTION: FORME RECENTE (7 MATCHS) --- */}
+              {avg7 && (
+                <div>
+                  <h3 className="text-sm font-semibold text-orange-400 mb-3 flex items-center gap-2">
+                    <Activity className="h-4 w-4" />
+                    FORME RÉCENTE (7 DERNIERS MATCHS)
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+                    <div className="text-center bg-primary/20 p-3 rounded-lg border border-primary/30">
+                      <p className="text-2xl font-display font-bold text-primary">{avg7.PTS.toFixed(1)}</p>
+                      <p className="text-xs text-muted-foreground mt-1 font-bold">PTS</p>
+                    </div>
+                    <div className="text-center bg-nba-blue/20 p-3 rounded-lg border border-nba-blue/30">
+                      <p className="text-2xl font-display font-bold text-nba-blue">{avg7.REB.toFixed(1)}</p>
+                      <p className="text-xs text-muted-foreground mt-1 font-bold">REB</p>
+                    </div>
+                    <div className="text-center bg-accent/20 p-3 rounded-lg border border-accent/30">
+                      <p className="text-2xl font-display font-bold text-accent">{avg7.AST.toFixed(1)}</p>
+                      <p className="text-xs text-muted-foreground mt-1 font-bold">AST</p>
+                    </div>
+                    <div className="text-center bg-secondary/60 p-3 rounded-lg border border-border">
+                      <p className="text-2xl font-display font-bold text-foreground">{avg7.PRA.toFixed(1)}</p>
+                      <p className="text-xs text-muted-foreground mt-1 font-bold">PRA</p>
+                    </div>
+                    <div className="text-center bg-secondary/60 p-3 rounded-lg border border-border">
+                      <p className="text-2xl font-display font-bold text-foreground">{avg7.PA.toFixed(1)}</p>
+                      <p className="text-xs text-muted-foreground mt-1 font-bold">PA</p>
+                    </div>
+                     <div className="text-center bg-secondary/60 p-3 rounded-lg border border-border">
+                      <p className="text-2xl font-display font-bold text-foreground">{avg7.PR.toFixed(1)}</p>
+                      <p className="text-xs text-muted-foreground mt-1 font-bold">PR</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* --- SECTION 3: STATS ADDITIONNELLES --- */}
               <div>
-                <h3 className="text-sm font-semibold text-muted-foreground mb-3">STATS ADDITIONNELLES</h3>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-3">STATS ADDITIONNELLES (SAISON)</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center bg-secondary/50 p-3 rounded-lg">
                     <p className="text-2xl font-display font-bold text-foreground">{seasonStats.STL.toFixed(1)}</p>
@@ -250,57 +305,69 @@ export function PlayerDashboard({ player }: PlayerDashboardProps) {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-3"></div>
                   <p className="text-muted-foreground">Chargement des statistiques...</p>
                 </div>
-              ) : vsTeamStats && typeof vsTeamStats === 'object' && vsTeamStats.GP && vsTeamStats.GP > 0 ? (
-                <div className="space-y-6">
-                  <pre className="bg-gray-800 p-2 text-xs text-green-400 mt-4 rounded overflow-auto">{JSON.stringify(vsTeamStats, null, 2)}</pre>
-                  <div className="text-center mb-6">
-                    <h3 className="text-2xl font-display font-bold text-foreground">
-                      Moyennes contre {vsTeamStats.OPPONENT}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mt-1">sur {vsTeamStats.GP} matchs</p>
-                  </div>
+              ) : hasVsStats ? (
+                hasGamesPlayed ? (
+                  <div className="space-y-6">
+                    <div className="text-center mb-6">
+                      <h3 className="text-2xl font-display font-bold text-foreground">
+                        Moyennes contre {vsTeamStats.OPPONENT || searchedTeam}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-1">sur {vsTeamStats.GP} matchs</p>
+                    </div>
 
-                  {/* Individual Stats */}
-                  <div>
-                    <h4 className="text-sm font-semibold text-muted-foreground mb-3">STATS INDIVIDUELLES</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      <div className="text-center bg-primary/10 p-6 rounded-lg border border-primary/20">
-                        <p className="text-4xl font-display font-bold text-primary">{vsTeamStats.PTS?.toFixed(1) ?? '0.0'}</p>
-                        <p className="text-sm text-muted-foreground mt-2 font-medium">Points (PTS)</p>
+                    {/* Individual Stats */}
+                    <div>
+                      <h4 className="text-sm font-semibold text-muted-foreground mb-3">STATS INDIVIDUELLES</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div className="text-center bg-primary/10 p-6 rounded-lg border border-primary/20">
+                          <p className="text-4xl font-display font-bold text-primary">{vsTeamStats.PTS?.toFixed(1) ?? '0.0'}</p>
+                          <p className="text-sm text-muted-foreground mt-2 font-medium">Points (PTS)</p>
+                        </div>
+                        <div className="text-center bg-nba-blue/10 p-6 rounded-lg border border-nba-blue/20">
+                          <p className="text-4xl font-display font-bold text-nba-blue">{vsTeamStats.REB?.toFixed(1) ?? '0.0'}</p>
+                          <p className="text-sm text-muted-foreground mt-2 font-medium">Rebounds (REB)</p>
+                        </div>
+                        <div className="text-center bg-accent/10 p-6 rounded-lg border border-accent/20">
+                          <p className="text-4xl font-display font-bold text-accent">{vsTeamStats.AST?.toFixed(1) ?? '0.0'}</p>
+                          <p className="text-sm text-muted-foreground mt-2 font-medium">Assists (AST)</p>
+                        </div>
                       </div>
-                      <div className="text-center bg-nba-blue/10 p-6 rounded-lg border border-nba-blue/20">
-                        <p className="text-4xl font-display font-bold text-nba-blue">{vsTeamStats.REB?.toFixed(1) ?? '0.0'}</p>
-                        <p className="text-sm text-muted-foreground mt-2 font-medium">Rebounds (REB)</p>
-                      </div>
-                      <div className="text-center bg-accent/10 p-6 rounded-lg border border-accent/20">
-                        <p className="text-4xl font-display font-bold text-accent">{vsTeamStats.AST?.toFixed(1) ?? '0.0'}</p>
-                        <p className="text-sm text-muted-foreground mt-2 font-medium">Assists (AST)</p>
+                    </div>
+
+                    {/* Combo Stats */}
+                    <div>
+                      <h4 className="text-sm font-semibold text-muted-foreground mb-3">COMBOS PARIS SPORTIFS</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="text-center bg-gradient-to-br from-primary/20 to-primary/5 p-6 rounded-lg border border-primary/20">
+                          <p className="text-3xl font-display font-bold text-primary">{vsTeamStats.PRA?.toFixed(1) ?? '0.0'}</p>
+                          <p className="text-sm text-muted-foreground mt-2 font-medium">PTS+REB+AST</p>
+                        </div>
+                        <div className="text-center bg-gradient-to-br from-accent/20 to-accent/5 p-6 rounded-lg border border-accent/20">
+                          <p className="text-3xl font-display font-bold text-accent">{vsTeamStats.PA?.toFixed(1) ?? '0.0'}</p>
+                          <p className="text-sm text-muted-foreground mt-2 font-medium">PTS+AST</p>
+                        </div>
+                        <div className="text-center bg-gradient-to-br from-nba-blue/20 to-nba-blue/5 p-6 rounded-lg border border-nba-blue/20">
+                          <p className="text-3xl font-display font-bold text-nba-blue">{vsTeamStats.PR?.toFixed(1) ?? '0.0'}</p>
+                          <p className="text-sm text-muted-foreground mt-2 font-medium">PTS+REB</p>
+                        </div>
+                         {/* AR: AST + REB */}
+                        <div className="text-center bg-secondary/50 p-6 rounded-lg border border-border">
+                          <p className="text-3xl font-display font-bold text-foreground">{vsTeamStats.AR?.toFixed(1) ?? '0.0'}</p>
+                          <p className="text-sm text-muted-foreground mt-2 font-medium">AST+REB</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  {/* Combo Stats */}
-                  <div>
-                    <h4 className="text-sm font-semibold text-muted-foreground mb-3">COMBOS PARIS SPORTIFS</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      <div className="text-center bg-gradient-to-br from-primary/20 to-primary/5 p-6 rounded-lg border border-primary/20">
-                        <p className="text-3xl font-display font-bold text-primary">{vsTeamStats.PRA?.toFixed(1) ?? '0.0'}</p>
-                        <p className="text-sm text-muted-foreground mt-2 font-medium">PTS+REB+AST</p>
-                      </div>
-                      <div className="text-center bg-gradient-to-br from-accent/20 to-accent/5 p-6 rounded-lg border border-accent/20">
-                        <p className="text-3xl font-display font-bold text-accent">{vsTeamStats.PA?.toFixed(1) ?? '0.0'}</p>
-                        <p className="text-sm text-muted-foreground mt-2 font-medium">PTS+AST</p>
-                      </div>
-                      <div className="text-center bg-gradient-to-br from-nba-blue/20 to-nba-blue/5 p-6 rounded-lg border border-nba-blue/20">
-                        <p className="text-3xl font-display font-bold text-nba-blue">{vsTeamStats.PR?.toFixed(1) ?? '0.0'}</p>
-                        <p className="text-sm text-muted-foreground mt-2 font-medium">PTS+REB</p>
-                      </div>
-                    </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <p className="text-muted-foreground text-center">Aucune donnée trouvée contre l'équipe {searchedTeam}.</p>
                   </div>
-                </div>
+                )
               ) : searchedTeam ? (
+                // Cas d'attente ou erreur silencieuse
                 <div className="flex flex-col items-center justify-center py-12">
-                  <p className="text-muted-foreground text-center">Aucune donnée trouvée contre cette équipe.</p>
+                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-3"></div>
+                   <p className="text-muted-foreground text-center">Recherche en cours...</p>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-12">

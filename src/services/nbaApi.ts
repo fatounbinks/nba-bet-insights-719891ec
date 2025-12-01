@@ -64,14 +64,16 @@ export interface VsTeamStats {
   PRA: number;
   PA: number;
   PR: number;
+  AR: number; // <--- AJOUTER ICI
   STL: number;
   BLK: number;
-  OPPONENT: string;
+  OPPONENT?: string;
 }
 
 export const nbaApi = {
+  // CORRECTION ICI : passage à 30h pour correspondre au backend
   async get48hGames(): Promise<TodayGame[]> {
-    const response = await fetch(`${API_BASE_URL}/games/48h`);
+    const response = await fetch(`${API_BASE_URL}/games/30h`);
     if (!response.ok) throw new Error("Failed to fetch games");
     return response.json();
   },
