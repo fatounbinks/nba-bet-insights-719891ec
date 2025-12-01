@@ -45,17 +45,25 @@ export function MatchPredictionModal({ open, onOpenChange, game }: MatchPredicti
   const homeTeamId = game ? getTeamCode(game.homeTeam) : "";
   const awayTeamId = game ? getTeamCode(game.awayTeam) : "";
 
-  const { data: homePlayerSearchResults = [] } = useQuery({
-    queryKey: ["player-search", homeSearchQuery],
-    queryFn: () => nbaApi.searchPlayers(homeSearchQuery),
-    enabled: homeSearchQuery.length > 0,
+  const { data: homeRoster = [] } = useQuery({
+    queryKey: ["team-roster", homeTeamId],
+    queryFn: () => nbaApi.getTeamRoster(homeTeamId),
+    enabled: !!homeTeamId,
   });
 
-  const { data: awayPlayerSearchResults = [] } = useQuery({
-    queryKey: ["player-search", awaySearchQuery],
-    queryFn: () => nbaApi.searchPlayers(awaySearchQuery),
-    enabled: awaySearchQuery.length > 0,
+  const { data: awayRoster = [] } = useQuery({
+    queryKey: ["team-roster", awayTeamId],
+    queryFn: () => nbaApi.getTeamRoster(awayTeamId),
+    enabled: !!awayTeamId,
   });
+
+  const homePlayerSearchResults = homeRoster.filter(player =>
+    player.full_name.toLowerCase().includes(homeSearchQuery.toLowerCase())
+  );
+
+  const awayPlayerSearchResults = awayRoster.filter(player =>
+    player.full_name.toLowerCase().includes(awaySearchQuery.toLowerCase())
+  );
 
   const { data: prediction, isLoading, refetch } = useQuery({
     queryKey: ["match-prediction", homeTeamId, awayTeamId, homeMissingPlayers.map(p => p.id).join(","), awayMissingPlayers.map(p => p.id).join(",")],
