@@ -75,6 +75,11 @@ export interface AbsencesImpact {
   away_penalty: number;
 }
 
+export interface ContextAnalysis {
+  home_fatigue_factors: string[];
+  away_fatigue_factors: string[];
+}
+
 export interface MatchPrediction {
   home_team: string;
   away_team: string;
@@ -88,6 +93,7 @@ export interface MatchPrediction {
     away_net_rtg: number;
     spread_raw: number;
   };
+  context_analysis?: ContextAnalysis;
   absences_impact?: AbsencesImpact;
 }
 
