@@ -105,6 +105,21 @@ export interface PlayerProjection {
   opponent_defense_rating: number;
 }
 
+export interface PlayerStats {
+  games: number;
+  win_percentage: number;
+  ppg: number;
+  status: string;
+}
+
+export interface MissingPlayerAnalysis {
+  player_id: number;
+  player_name: string;
+  team: string;
+  stats_with: PlayerStats;
+  stats_without: PlayerStats;
+}
+
 export const nbaApi = {
   // CORRECTION ICI : passage à 30h pour correspondre au backend
   async get48hGames(): Promise<TodayGame[]> {
