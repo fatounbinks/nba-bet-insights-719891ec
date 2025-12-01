@@ -278,4 +278,23 @@ export const nbaApi = {
     if (!response.ok) throw new Error("Failed to fetch full match prediction");
     return response.json();
   },
+
+  async getFullMatchPredictionWithAbsents(
+    homeTeamId: string,
+    awayTeamId: string,
+    homeAbsentIds?: number[],
+    awayAbsentIds?: number[]
+  ): Promise<InteractiveMatchPrediction> {
+    const params = new URLSearchParams();
+    if (homeAbsentIds && homeAbsentIds.length > 0) {
+      homeAbsentIds.forEach(id => params.append("home_absent", id.toString()));
+    }
+    if (awayAbsentIds && awayAbsentIds.length > 0) {
+      awayAbsentIds.forEach(id => params.append("away_absent", id.toString()));
+    }
+    const queryString = params.toString() ? `?${params.toString()}` : "";
+    const response = await fetch(`${API_BASE_URL}/predict/full-match/${homeTeamId}/${awayTeamId}${queryString}`);
+    if (!response.ok) throw new Error("Failed to fetch interactive match prediction");
+    return response.json();
+  },
 };
