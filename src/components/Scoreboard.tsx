@@ -4,6 +4,7 @@ import { nbaApi, TodayGame } from "@/services/nbaApi";
 import { Calendar, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MatchPredictionModal } from "./MatchPredictionModal";
 
 export function Scoreboard() {
