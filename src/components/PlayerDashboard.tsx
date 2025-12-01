@@ -220,10 +220,11 @@ export function PlayerDashboard({ player }: PlayerDashboardProps) {
 
       {/* Tabs Section */}
       <Tabs defaultValue="recent" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="recent">Matchs Récents</TabsTrigger>
           <TabsTrigger value="vs">Vs Adversaire</TabsTrigger>
           <TabsTrigger value="trend">Analyseur de Streak</TabsTrigger>
+          <TabsTrigger value="impact" onClick={() => setShowImpactAnalyzer(true)}>Impact Analyzer</TabsTrigger>
         </TabsList>
 
         {/* Tab 1: Recent Games */}
