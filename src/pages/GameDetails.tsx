@@ -135,15 +135,6 @@ const GameDetails = () => {
             )}
           </div>
 
-          {/* Blowout Warning */}
-          {hasHighBlowoutRisk && (
-            <Alert className="border-l-4 border-l-amber-500 bg-amber-500/10 mb-6">
-              <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-500" />
-              <AlertDescription className="text-amber-900 dark:text-amber-200">
-                ⚠️ Risque de Blowout élevé : Temps de jeu des stars potentiellement réduit.
-              </AlertDescription>
-            </Alert>
-          )}
         </div>
 
 
