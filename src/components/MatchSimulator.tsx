@@ -152,14 +152,14 @@ export function MatchSimulator({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {prediction.home_players.map((player) => {
+                {prediction.home_players.map((player, idx) => {
                   const isAbsent = player.player_id ? homeAbsentIds.includes(player.player_id) : false;
                   const boostValue = prediction.match_context.home_usage_boost;
                   const boostApplied = player.context?.boost_applied || "";
 
                   return (
                     <TableRow
-                      key={player.player_id}
+                      key={player.player_id || `home-${idx}`}
                       className={isAbsent ? "bg-muted/50 opacity-60" : ""}
                     >
                       <TableCell className="w-10">
