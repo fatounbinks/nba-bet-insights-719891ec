@@ -48,6 +48,8 @@ export interface TodayGame {
   gameId: string;
   homeTeam: string;
   awayTeam: string;
+  homeTeamId?: string;
+  awayTeamId?: string;
   time: string;
   homeScore?: number;
   awayScore?: number;
