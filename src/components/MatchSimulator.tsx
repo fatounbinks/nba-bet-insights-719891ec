@@ -46,7 +46,7 @@ export function MatchSimulator({
     .map((idx) => initialPrediction?.away_players[idx]?.player_id)
     .filter((id) => id !== undefined) as number[];
 
-  // Fetch with absent players
+  // Fetch with absent players (only if we have absent IDs and initial data is loaded)
   const { data: prediction, isLoading: predictionLoading } = useQuery({
     queryKey: ["interactive-match-prediction", homeTeamId, awayTeamId, homeAbsentIds.join(","), awayAbsentIds.join(",")],
     queryFn: () =>
@@ -56,7 +56,7 @@ export function MatchSimulator({
         homeAbsentIds.length > 0 ? homeAbsentIds : undefined,
         awayAbsentIds.length > 0 ? awayAbsentIds : undefined
       ),
-    enabled: homeAbsentIds.length > 0 || awayAbsentIds.length > 0,
+    enabled: !initialLoading && (homeAbsentIds.length > 0 || awayAbsentIds.length > 0),
   });
 
   // Use the recalculated prediction if available, otherwise use initial
