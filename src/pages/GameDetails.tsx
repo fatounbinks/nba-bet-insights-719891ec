@@ -149,15 +149,6 @@ const GameDetails = () => {
           )}
         </div>
 
-        {/* Error State */}
-        {predictionError && (
-          <Alert className="border-l-4 border-l-destructive bg-destructive/10 mb-6">
-            <AlertTriangle className="h-4 w-4 text-destructive" />
-            <AlertDescription className="text-destructive">
-              Erreur lors du chargement des données. Veuillez réessayer.
-            </AlertDescription>
-          </Alert>
-        )}
 
         {/* Interactive Match Simulator */}
         {homeTeamId && awayTeamId && (
