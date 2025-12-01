@@ -90,9 +90,6 @@ const GameDetails = () => {
     );
   }
 
-  const blowoutRiskLevel = matchPrediction?.blowout_analysis?.risk_level || "LOW";
-  const hasHighBlowoutRisk = blowoutRiskLevel === "HIGH";
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
