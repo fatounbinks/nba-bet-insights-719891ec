@@ -108,16 +108,16 @@ export function MatchSimulator({
               <div className="text-lg font-bold text-foreground">{awayTeamName}</div>
             </div>
             <div className="flex gap-2 flex-wrap justify-end">
-              {prediction.match_context.home_usage_boost > 0 && (
+              {displayPrediction.match_context.home_usage_boost > 0 && (
                 <Badge className="bg-emerald-500/20 text-emerald-700 border-emerald-500/30 border gap-1">
                   <Flame className="h-3 w-3" />
-                  <span className="text-xs">🔥 Redistribution attaque: +{prediction.match_context.home_usage_boost.toFixed(1)}% ({homeTeamName})</span>
+                  <span className="text-xs">🔥 Redistribution attaque: +{displayPrediction.match_context.home_usage_boost.toFixed(1)}% ({homeTeamName})</span>
                 </Badge>
               )}
-              {prediction.match_context.away_usage_boost > 0 && (
+              {displayPrediction.match_context.away_usage_boost > 0 && (
                 <Badge className="bg-emerald-500/20 text-emerald-700 border-emerald-500/30 border gap-1">
                   <Flame className="h-3 w-3" />
-                  <span className="text-xs">🔥 Redistribution attaque: +{prediction.match_context.away_usage_boost.toFixed(1)}% ({awayTeamName})</span>
+                  <span className="text-xs">🔥 Redistribution attaque: +{displayPrediction.match_context.away_usage_boost.toFixed(1)}% ({awayTeamName})</span>
                 </Badge>
               )}
             </div>
