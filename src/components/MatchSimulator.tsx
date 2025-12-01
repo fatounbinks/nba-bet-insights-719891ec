@@ -27,11 +27,22 @@ export function MatchSimulator({
   homeTeamName,
   awayTeamName,
 }: MatchSimulatorProps) {
-  const [homeAbsentIds, setHomeAbsentIds] = useState<number[]>([]);
-  const [awayAbsentIds, setAwayAbsentIds] = useState<number[]>([]);
+  const [homeAbsentPlayers, setHomeAbsentPlayers] = useState<string[]>([]);
+  const [awayAbsentPlayers, setAwayAbsentPlayers] = useState<string[]>([]);
+
+  // Convert player names to IDs for API call (using player name as identifier)
+  const homeAbsentIds = homeAbsentPlayers.map((name) => {
+    const player = prediction?.home_players.find((p) => p.player === name);
+    return player?.player_id || 0;
+  }).filter((id) => id > 0);
+
+  const awayAbsentIds = awayAbsentPlayers.map((name) => {
+    const player = prediction?.away_players.find((p) => p.player === name);
+    return player?.player_id || 0;
+  }).filter((id) => id > 0);
 
   const { data: prediction, isLoading } = useQuery({
-    queryKey: ["interactive-match-prediction", homeTeamId, awayTeamId, homeAbsentIds.join(","), awayAbsentIds.join(",")],
+    queryKey: ["interactive-match-prediction", homeTeamId, awayTeamId, homeAbsentPlayers.join(","), awayAbsentPlayers.join(",")],
     queryFn: () =>
       nbaApi.getFullMatchPredictionWithAbsents(
         homeTeamId,
@@ -42,18 +53,18 @@ export function MatchSimulator({
   });
 
   const toggleHomePlayerAbsent = useCallback(
-    (playerId: number) => {
-      setHomeAbsentIds((prev) =>
-        prev.includes(playerId) ? prev.filter((id) => id !== playerId) : [...prev, playerId]
+    (playerName: string) => {
+      setHomeAbsentPlayers((prev) =>
+        prev.includes(playerName) ? prev.filter((name) => name !== playerName) : [...prev, playerName]
       );
     },
     []
   );
 
   const toggleAwayPlayerAbsent = useCallback(
-    (playerId: number) => {
-      setAwayAbsentIds((prev) =>
-        prev.includes(playerId) ? prev.filter((id) => id !== playerId) : [...prev, playerId]
+    (playerName: string) => {
+      setAwayAbsentPlayers((prev) =>
+        prev.includes(playerName) ? prev.filter((name) => name !== playerName) : [...prev, playerName]
       );
     },
     []
