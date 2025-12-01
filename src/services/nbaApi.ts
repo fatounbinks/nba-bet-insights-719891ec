@@ -74,13 +74,15 @@ export interface MatchPrediction {
   home_team: string;
   away_team: string;
   predicted_winner: string;
-  win_probability: number;
-  spread: number;
-  total_points: number;
+  predicted_margin: number;
   confidence_level: string;
-  home_net_rating: number;
-  away_net_rating: number;
-  pace: number;
+  win_probability_home: number;
+  predicted_total_points: number;
+  details: {
+    home_net_rtg: number;
+    away_net_rtg: number;
+    spread_raw: number;
+  };
 }
 
 export interface PlayerProjection {

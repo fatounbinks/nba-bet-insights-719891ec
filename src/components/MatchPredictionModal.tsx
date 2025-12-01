@@ -84,9 +84,9 @@ export function MatchPredictionModal({ open, onOpenChange, game }: MatchPredicti
                     {prediction.predicted_winner}
                   </div>
                   <div className="flex items-center gap-3">
-                    <Progress value={prediction.win_probability * 100} className="flex-1 h-3" />
+                    <Progress value={prediction.win_probability_home} className="flex-1 h-3" />
                     <span className="font-bold text-lg text-purple-600 dark:text-purple-400">
-                      {(prediction.win_probability * 100).toFixed(0)}%
+                      {prediction.win_probability_home.toFixed(1)}%
                     </span>
                   </div>
                 </div>
@@ -101,7 +101,7 @@ export function MatchPredictionModal({ open, onOpenChange, game }: MatchPredicti
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl font-display font-bold text-amber-600 dark:text-amber-400">
-                    {prediction.predicted_winner === game?.homeTeam ? "+" : "-"}{Math.abs(prediction.spread).toFixed(1)}
+                    {prediction.predicted_winner === game?.homeTeam ? "+" : "-"}{Math.abs(prediction.details.spread_raw).toFixed(1)}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">{prediction.predicted_winner}</p>
                 </CardContent>
@@ -132,24 +132,24 @@ export function MatchPredictionModal({ open, onOpenChange, game }: MatchPredicti
                       <div>
                         <p className="text-sm font-medium">{game?.homeTeam}</p>
                         <p className="text-2xl font-display font-bold text-purple-600 dark:text-purple-400">
-                          {prediction.home_net_rating.toFixed(1)}
+                          {prediction.details.home_net_rtg.toFixed(1)}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium">{game?.awayTeam}</p>
                         <p className="text-2xl font-display font-bold text-amber-600 dark:text-amber-400">
-                          {prediction.away_net_rating.toFixed(1)}
+                          {prediction.details.away_net_rtg.toFixed(1)}
                         </p>
                       </div>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <div className="text-sm font-semibold text-muted-foreground">Rythme Prévu (Pace)</div>
+                    <div className="text-sm font-semibold text-muted-foreground">Marge Prédite</div>
                     <div className="p-3 bg-secondary/50 rounded-lg">
                       <p className="text-2xl font-display font-bold text-indigo-600 dark:text-indigo-400">
-                        {prediction.pace.toFixed(1)}
+                        {Math.abs(prediction.predicted_margin).toFixed(1)}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">Possessions/match</p>
+                      <p className="text-xs text-muted-foreground mt-1">Points d'écart</p>
                     </div>
                   </div>
                 </div>
@@ -186,7 +186,7 @@ export function MatchPredictionModal({ open, onOpenChange, game }: MatchPredicti
               </CardHeader>
               <CardContent>
                 <p className="text-4xl font-display font-bold text-teal-600 dark:text-teal-400">
-                  {prediction.total_points.toFixed(0)}
+                  {prediction.predicted_total_points.toFixed(0)}
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">Points combinés des deux équipes</p>
               </CardContent>
