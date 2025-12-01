@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { MatchPredictionModal } from "./MatchPredictionModal";
 
 export function Scoreboard() {
+  const navigate = useNavigate();
   const [selectedGame, setSelectedGame] = useState<TodayGame | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -20,6 +21,10 @@ export function Scoreboard() {
   const handleAnalyzeClick = (game: TodayGame) => {
     setSelectedGame(game);
     setModalOpen(true);
+  };
+
+  const handleGameCardClick = (game: TodayGame) => {
+    navigate(`/game/${game.gameId}`);
   };
 
   if (isLoading) {
