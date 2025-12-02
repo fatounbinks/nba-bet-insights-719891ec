@@ -108,6 +108,15 @@ export function MatchSimulator({
     []
   );
 
+  const handlePlayerClick = useCallback(
+    (player: PlayerFullPrediction, team: "home" | "away") => {
+      setSelectedPlayer(player);
+      setModalTeam(team);
+      setModalOpen(true);
+    },
+    []
+  );
+
   const hasHighBlowoutRisk = useMemo(() => {
     if (!displayPrediction) return false;
     const allPlayers = [...displayPrediction.home_players, ...displayPrediction.away_players];
