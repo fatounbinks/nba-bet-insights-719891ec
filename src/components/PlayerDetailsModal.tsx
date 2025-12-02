@@ -28,7 +28,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, TrendingUp, Flame } from "lucide-react";
+import { TrendingUp, Flame } from "lucide-react";
 
 interface PlayerDetailsModalProps {
   isOpen: boolean;
@@ -108,8 +108,8 @@ export function PlayerDetailsModal({
     return historyData?.recent_form || [];
   }, [historyData]);
 
-  const h2hHistory = useMemo(() => {
-    return historyData?.h2h_history || [];
+  const h2hAverage = useMemo(() => {
+    return historyData?.h2h_avg || null;
   }, [historyData]);
 
   const getRecommendationColor = (recommendation: string): string => {
@@ -233,41 +233,72 @@ export function PlayerDetailsModal({
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                   </div>
-                ) : h2hHistory.length > 0 ? (
-                  <div className="border rounded-lg overflow-hidden">
-                    <Table className="text-sm">
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Date</TableHead>
-                          <TableHead className="text-right">MIN</TableHead>
-                          <TableHead className="text-right">PTS</TableHead>
-                          <TableHead className="text-right">REB</TableHead>
-                          <TableHead className="text-right">AST</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {h2hHistory.map((game, idx) => (
-                          <TableRow key={idx} className="hover:bg-muted/50">
-                            <TableCell className="font-medium text-xs">
-                              {new Date(game.date).toLocaleDateString("fr-FR", {
-                                month: "2-digit",
-                                day: "2-digit",
-                              })}
-                            </TableCell>
-                            <TableCell className="text-right">{game.min}</TableCell>
-                            <TableCell className="text-right font-semibold">
-                              {game.pts}
-                            </TableCell>
-                            <TableCell className="text-right">{game.reb}</TableCell>
-                            <TableCell className="text-right">{game.ast}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                ) : h2hAverage && h2hAverage.GP > 0 ? (
+                  <div className="space-y-3">
+                    <p className="text-sm text-muted-foreground font-medium">
+                      Moyenne sur les {h2hAverage.GP} derniers matchs
+                    </p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {/* PTS */}
+                      <div className="bg-primary/10 p-3 rounded-lg border border-primary/20 text-center">
+                        <p className="text-xs text-muted-foreground font-semibold mb-1">PTS</p>
+                        <p className="text-2xl font-bold text-primary">
+                          {h2hAverage.PTS?.toFixed(1) || "0.0"}
+                        </p>
+                      </div>
+
+                      {/* REB */}
+                      <div className="bg-blue-500/10 p-3 rounded-lg border border-blue-500/20 text-center">
+                        <p className="text-xs text-muted-foreground font-semibold mb-1">REB</p>
+                        <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                          {h2hAverage.REB?.toFixed(1) || "0.0"}
+                        </p>
+                      </div>
+
+                      {/* AST */}
+                      <div className="bg-emerald-500/10 p-3 rounded-lg border border-emerald-500/20 text-center">
+                        <p className="text-xs text-muted-foreground font-semibold mb-1">AST</p>
+                        <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                          {h2hAverage.AST?.toFixed(1) || "0.0"}
+                        </p>
+                      </div>
+
+                      {/* PRA - Highlighted */}
+                      <div className="bg-amber-500/20 p-3 rounded-lg border-2 border-amber-500/40 text-center">
+                        <p className="text-xs font-bold text-amber-700 dark:text-amber-300 mb-1">PRA</p>
+                        <p className="text-2xl font-bold text-amber-900 dark:text-amber-200">
+                          {h2hAverage.PRA?.toFixed(1) || "0.0"}
+                        </p>
+                      </div>
+
+                      {/* PA */}
+                      <div className="bg-cyan-500/10 p-3 rounded-lg border border-cyan-500/20 text-center">
+                        <p className="text-xs text-muted-foreground font-semibold mb-1">PA</p>
+                        <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">
+                          {h2hAverage.PA?.toFixed(1) || "0.0"}
+                        </p>
+                      </div>
+
+                      {/* PR */}
+                      <div className="bg-orange-500/10 p-3 rounded-lg border border-orange-500/20 text-center">
+                        <p className="text-xs text-muted-foreground font-semibold mb-1">PR</p>
+                        <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                          {h2hAverage.PR?.toFixed(1) || "0.0"}
+                        </p>
+                      </div>
+
+                      {/* AR */}
+                      <div className="bg-pink-500/10 p-3 rounded-lg border border-pink-500/20 text-center">
+                        <p className="text-xs text-muted-foreground font-semibold mb-1">AR</p>
+                        <p className="text-2xl font-bold text-pink-600 dark:text-pink-400">
+                          {h2hAverage.AR?.toFixed(1) || "0.0"}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
-                    Aucune donnée disponible
+                    Aucun historique récent contre cette équipe
                   </div>
                 )}
               </TabsContent>
