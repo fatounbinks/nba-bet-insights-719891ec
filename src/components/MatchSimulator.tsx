@@ -30,6 +30,9 @@ export function MatchSimulator({
 }: MatchSimulatorProps) {
   const [homeAbsentIndices, setHomeAbsentIndices] = useState<number[]>([]);
   const [awayAbsentIndices, setAwayAbsentIndices] = useState<number[]>([]);
+  const [selectedPlayer, setSelectedPlayer] = useState<PlayerFullPrediction | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTeam, setModalTeam] = useState<"home" | "away">("home");
 
   // Initial fetch without absent players
   const { data: initialPrediction, isLoading: initialLoading } = useQuery({
