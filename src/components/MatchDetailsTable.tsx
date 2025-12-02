@@ -1,7 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PlayerFullPrediction } from "@/services/nbaApi";
-import { Zap, Target, Shield } from "lucide-react";
+import { Zap, Target, Shield, Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { getReasoningStyle } from "@/lib/utils";
 
 interface MatchDetailsTableProps {
   teamName: string;
