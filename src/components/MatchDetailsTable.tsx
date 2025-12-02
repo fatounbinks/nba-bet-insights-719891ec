@@ -110,7 +110,12 @@ export function MatchDetailsTable({ teamName, players, isHomeTeam = false, oppon
                   <td className="py-3 px-2">
                     <div className="flex items-center gap-2">
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-foreground truncate">{player.player}</p>
+                        <button
+                          onClick={() => handlePlayerClick(player)}
+                          className="font-semibold text-foreground truncate hover:text-primary hover:underline cursor-pointer transition-colors text-left"
+                        >
+                          {player.player}
+                        </button>
                       </div>
                       {player.context?.reasoning && (
                         <Tooltip>
