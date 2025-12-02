@@ -216,14 +216,15 @@ export interface RecentFormAvg {
   [key: string]: number;
 }
 
-export interface H2HHistoryGame {
-  GAME_DATE: string;
-  MIN: number;
+export interface H2HAvg {
+  GP: number;
   PTS: number;
   REB: number;
   AST: number;
   PRA: number;
-  [key: string]: any;
+  PR: number;
+  PA: number;
+  AR: number;
 }
 
 export interface SeasonTrend {
@@ -234,7 +235,7 @@ export interface SeasonTrend {
 
 export interface PlayerPopupData {
   recent_form_avg: RecentFormAvg;
-  h2h_history: H2HHistoryGame[];
+  h2h_avg: H2HAvg;
   season_trend: SeasonTrend;
 }
 
