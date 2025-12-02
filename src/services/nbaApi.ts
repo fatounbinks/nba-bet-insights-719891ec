@@ -318,4 +318,34 @@ export const nbaApi = {
     if (!response.ok) throw new Error("Failed to fetch interactive match prediction");
     return response.json();
   },
+
+  async getPlayerDeepAnalytics(
+    playerId: number,
+    opponentTeamId: string
+  ): Promise<PlayerProjection> {
+    const response = await fetch(`${API_BASE_URL}/predict/deep-analytics/${playerId}/vs/${opponentTeamId}`);
+    if (!response.ok) throw new Error("Failed to fetch player deep analytics");
+    return response.json();
+  },
+
+  async getPlayerDetailsHistory(
+    playerId: number,
+    opponentTeamId: string
+  ): Promise<PlayerDetailsHistory> {
+    const response = await fetch(`${API_BASE_URL}/analysis/player/${playerId}/details/${opponentTeamId}`);
+    if (!response.ok) throw new Error("Failed to fetch player details history");
+    return response.json();
+  },
+
+  async getCalculatorAnalysis(
+    projection: number,
+    line: number,
+    statCategory: string
+  ): Promise<CalculatorResult> {
+    const response = await fetch(
+      `${API_BASE_URL}/predict/calculator?projection=${projection}&line=${line}&stat_category=${statCategory}`
+    );
+    if (!response.ok) throw new Error("Failed to fetch calculator analysis");
+    return response.json();
+  },
 };
