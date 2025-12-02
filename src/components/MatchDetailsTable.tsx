@@ -1,7 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PlayerFullPrediction } from "@/services/nbaApi";
-import { Zap, Target, Shield } from "lucide-react";
+import { Zap, Target, Shield, Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { getReasoningStyle } from "@/lib/utils";
 
 interface MatchDetailsTableProps {
   teamName: string;
@@ -49,7 +56,8 @@ export function MatchDetailsTable({ teamName, players, isHomeTeam = false }: Mat
   const borderColor = isHomeTeam ? "border-l-purple-500" : "border-l-amber-500";
 
   return (
-    <Card className={`border-l-4 ${borderColor}`}>
+    <TooltipProvider>
+      <Card className={`border-l-4 ${borderColor}`}>
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center justify-between">
           <span>{teamName}</span>
@@ -83,6 +91,26 @@ export function MatchDetailsTable({ teamName, players, isHomeTeam = false }: Mat
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-foreground truncate">{player.player}</p>
                       </div>
+                      {player.context?.reasoning && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button className="flex-shrink-0 p-1 hover:opacity-75 transition-opacity">
+                              <Info className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            className={`max-w-xs ${
+                              getReasoningStyle(player.context.reasoning).backgroundColor
+                            } ${
+                              getReasoningStyle(player.context.reasoning).textColor
+                            } border ${
+                              getReasoningStyle(player.context.reasoning).borderColor
+                            }`}
+                          >
+                            <p className="text-sm font-medium">{player.context.reasoning}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
                       {player.position && (
                         <Badge className={`text-xs ${getPositionBadgeColor(player.position)}`}>
                           {player.position}
@@ -122,5 +150,6 @@ export function MatchDetailsTable({ teamName, players, isHomeTeam = false }: Mat
         </div>
       </CardContent>
     </Card>
+    </TooltipProvider>
   );
 }

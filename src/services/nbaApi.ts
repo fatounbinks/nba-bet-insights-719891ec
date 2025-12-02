@@ -155,6 +155,7 @@ export interface PlayerContext {
   boost_applied: string;
   blowout_penalty: string;
   form_weight: string;
+  reasoning?: string;
 }
 
 export interface PlayerFullPrediction {
