@@ -56,7 +56,8 @@ export function MatchDetailsTable({ teamName, players, isHomeTeam = false }: Mat
   const borderColor = isHomeTeam ? "border-l-purple-500" : "border-l-amber-500";
 
   return (
-    <Card className={`border-l-4 ${borderColor}`}>
+    <TooltipProvider>
+      <Card className={`border-l-4 ${borderColor}`}>
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center justify-between">
           <span>{teamName}</span>
@@ -129,5 +130,6 @@ export function MatchDetailsTable({ teamName, players, isHomeTeam = false }: Mat
         </div>
       </CardContent>
     </Card>
+    </TooltipProvider>
   );
 }
