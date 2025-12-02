@@ -199,7 +199,7 @@ export interface PlayerHistoryGame {
 
 export interface PlayerDetailsHistory {
   recent_form: PlayerHistoryGame[];
-  h2h_history: PlayerHistoryGame[];
+  h2h_avg: H2HAvg;
 }
 
 export interface CalculatorResult {
