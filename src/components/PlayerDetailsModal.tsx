@@ -108,8 +108,8 @@ export function PlayerDetailsModal({
     return historyData?.recent_form || [];
   }, [historyData]);
 
-  const h2hHistory = useMemo(() => {
-    return historyData?.h2h_history || [];
+  const h2hAvg = useMemo(() => {
+    return historyData?.h2h_avg || { GP: 0, PTS: 0, REB: 0, AST: 0, PRA: 0, PR: 0, PA: 0, AR: 0 };
   }, [historyData]);
 
   const getRecommendationColor = (recommendation: string): string => {
